@@ -234,7 +234,7 @@
 <div class="modal-overlay" id="logoutModal">
     <div class="modal-box">
         <h3>KPI Appraisal System</h3>
-        <p>Do you really want to logout?</p>
+        <p>Do you really want t logout?</p>
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeLogout()">Cancel</button>
             <button class="btn-logout" onclick="confirmLogout()">Yes, Logout</button>
