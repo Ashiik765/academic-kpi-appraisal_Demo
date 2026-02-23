@@ -2,290 +2,152 @@
 
 @section('content')
 
-@php use Illuminate\Support\Str; @endphp
-
 <style>
-body { 
-    font-family: 'Segoe UI', sans-serif; 
-    background: #f1f5f9;
+.kpi-container {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 
-/* ===== HEADER SECTION ===== */
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.kpi-header {
     margin-bottom: 20px;
 }
 
-.page-title {
-    font-size: 22px;
-    font-weight: 600;
-}
-
-/* ===== STATUS BADGE ===== */
-.status-badge {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.status-draft { background: #dcfce7; color: #166534; }
-.status-submitted { background: #fee2e2; color: #991b1b; }
-.status-approved { background: #dbeafe; color: #1e40af; }
-
-/* ===== ACTION BUTTONS ===== */
-.action-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.save-btn, .submit-btn {
-    padding: 10px 18px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s ease;
-}
-
-.save-btn {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: white;
-}
-
-.save-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.submit-btn {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-}
-
-.submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-/* ===== DIMENSION SECTION ===== */
-.dimension-header {
-    background: linear-gradient(135deg, #6366f1, #0f766e);
-    color: white;
-    padding: 15px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-bottom: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-    transition: 0.3s;
-}
-
-.dimension-header:hover {
-    opacity: 0.9;
-}
-
-.dimension-content {
-    display: none;
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== TABLE ===== */
-table {
+.kpi-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
 }
 
-th {
-    background: #0f172a;
+.kpi-table th {
+    background: #2563eb;
     color: white;
     padding: 12px;
     font-size: 14px;
+    text-align: left;
 }
 
-td {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+.kpi-table td {
+    padding: 12px;
+    border-bottom: 1px solid #f1f1f1;
     font-size: 14px;
 }
 
-input[type="number"],
-input[type="text"],
-input[type="file"] {
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid #cbd5e1;
+.kpi-table input[type="number"],
+.kpi-table input[type="file"] {
     width: 100%;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
 }
 
-/* ===== SUCCESS POPUP ===== */
-.popup {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #16a34a;
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-approved { background: #dcfce7; color: #16a34a; }
+.badge-rejected { background: #fee2e2; color: #dc2626; }
+.badge-pending  { background: #fef3c7; color: #d97706; }
+.badge-draft    { background: #e5e7eb; color: #6b7280; }
+
+.btn-submit {
+    margin-top: 20px;
+    padding: 10px 18px;
+    background: #2563eb;
     color: white;
-    padding: 15px 25px;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background: #1e40af;
 }
 </style>
 
+<div class="kpi-container">
 
-<!-- ===== HEADER ===== -->
-<div class="page-header">
-    <div>
-        <div class="page-title">
-            📘 Staff KPI Panel ({{ $submission->year }})
+    <div class="kpi-header">
+        <h2>KPI Entry - {{ ucfirst($category) }}</h2>
+    </div>
+
+    @if(session('success'))
+        <div style="color:green; margin-bottom:15px;">
+            {{ session('success') }}
         </div>
-        <br>
-        Status:
-        <span class="status-badge status-{{ $submission->status }}">
-            {{ ucfirst($submission->status) }}
-        </span>
-    </div>
-
-    @if($submission->status == 'draft')
-    <div class="action-buttons">
-        <button type="submit" form="saveForm" class="save-btn">
-            💾 Save Draft
-        </button>
-
-        <button type="submit" form="submitForm" class="submit-btn">
-            📤 Turn In
-        </button>
-    </div>
     @endif
 
-    
-</div>
+    <form method="POST" action="/staff/kpi/save" enctype="multipart/form-data">
+        @csrf
 
+        <input type="hidden" name="submission_id" value="{{ $submission->id }}">
+        <input type="hidden" name="category" value="{{ $category }}">
+        <!-- action will be set by JavaScript when user clicks submit button -->
+        <input type="hidden" name="action" id="formAction" value="save">
 
-@if(session('success'))
-<div class="popup" id="popup">
-    {{ session('success') }}
-</div>
-<script>
-setTimeout(() => {
-    document.getElementById('popup').style.display = 'none';
-}, 3000);
-</script>
-@endif
-
-
-<!-- ===== SAVE FORM ===== -->
-<form id="saveForm" method="POST" action="/staff/kpi/save" enctype="multipart/form-data">
-@csrf
-<input type="hidden" name="submission_id" value="{{ $submission->id }}">
-
-@php
-$categories = $kpis->pluck('category')->unique();
-@endphp
-
-@foreach($categories as $category)
-
-<div>
-    <div class="dimension-header"
-         onclick="toggleSection('{{ Str::slug($category) }}')">
-        <span>{{ strtoupper($category) }}</span>
-        <span>▶</span>
-    </div>
-
-    <div class="dimension-content"
-         id="section-{{ Str::slug($category) }}">
-
-        <table>
+        <table class="kpi-table">
             <tr>
-                <th>#</th>
-                <th>KPI Item</th>
-                <th>Weight</th>
+                <th>ID</th>
+                <th>Item</th>
+                <th>Max</th>
                 <th>Self Score</th>
                 <th>Evidence</th>
-                <th>Comment</th>
+                <th>Status</th>
             </tr>
 
-            @foreach($kpis->where('category', $category) as $kpi)
-
+            @foreach($kpis as $kpi)
             @php
-            $item = $submissionItems[$kpi->id] ?? null;
+                $item = $submissionItems[$kpi->id] ?? null;
+                $status = $item->status ?? 'draft';
             @endphp
 
             <tr>
-                <td>{{ $loop->iteration }}</td>
+                <td>{{ $kpi->id }}</td>
                 <td>{{ $kpi->item }}</td>
-                <td>{{ $kpi->weight }}</td>
+                <td>{{ $kpi->max_marks }}</td>
 
                 <td>
                     <input type="number"
                            name="self_score[{{ $kpi->id }}]"
-                           min="0"
                            max="{{ $kpi->max_marks }}"
                            value="{{ $item->self_score ?? '' }}"
-                           {{ $submission->status != 'draft' ? 'disabled' : '' }}>
+                           {{ $status == 'approved' ? 'readonly' : '' }}>
                 </td>
 
                 <td>
-                    <input type="file"
-                           name="evidence[{{ $kpi->id }}]"
-                           {{ $submission->status != 'draft' ? 'disabled' : '' }}>
-
-                    @if($item && $item->evidence)
-                        <br>
-                        <a href="{{ asset('storage/'.$item->evidence) }}"
-                           target="_blank">View</a>
+                    @if($status == 'approved')
+                        Uploaded
+                    @else
+                        <input type="file" name="evidence[{{ $kpi->id }}]">
                     @endif
                 </td>
 
                 <td>
-                    <input type="text"
-                           name="comment[{{ $kpi->id }}]"
-                           value="{{ $item->comment ?? '' }}"
-                           {{ $submission->status != 'draft' ? 'disabled' : '' }}>
+                    @if($status == 'approved')
+                        <span class="badge badge-approved">Approved</span>
+                    @elseif($status == 'submitted')
+                        <span class="badge badge-pending">Pending</span>
+                    @elseif($status == 'rejected')
+                        <span class="badge badge-rejected">Rejected</span>
+                    @else
+                        <span class="badge badge-draft">Draft</span>
+                    @endif
                 </td>
             </tr>
-
             @endforeach
         </table>
 
-    </div>
+        <!-- button submits as 'submit' action; we update hidden field accordingly -->
+        <button type="submit" class="btn-submit" onclick="document.getElementById('formAction').value='submit';">
+            Turn In Dimension
+        </button>
+
+    </form>
+
 </div>
-
-@endforeach
-</form>
-
-
-<!-- ===== SUBMIT FORM ===== -->
-@if($submission->status == 'draft')
-<form id="submitForm"
-      method="POST"
-      action="/staff/kpi/submit/{{ $submission->id }}">
-    @csrf
-</form>
-@endif
-
-
-<script>
-function toggleSection(id) {
-    let section = document.getElementById('section-' + id);
-    section.style.display =
-        section.style.display === "block" ? "none" : "block";
-}
-</script>
 
 @endsection

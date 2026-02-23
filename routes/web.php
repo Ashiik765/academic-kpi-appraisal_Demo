@@ -9,8 +9,8 @@ use App\Models\KpiSubmission;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StaffKpiController;
-
 use App\Http\Controllers\AppraiserKpiController;
+use App\Http\Controllers\AdminKpiController;
 
 
 
@@ -94,10 +94,9 @@ Route::get('/staff/profile', function () {
 });
 
 
+Route::get('/staff/kpi/{category}', [StaffKpiController::class, 'category']);
 Route::post('/staff/kpi/save', [StaffKpiController::class, 'save']);
 Route::post('/staff/kpi/submit/{id}', [StaffKpiController::class, 'submit']);
-Route::get('/staff/kpi', [StaffKpiController::class, 'index'])
-     ->name('staff.kpi');
 
 /*
 |--------------------------------------------------------------------------
@@ -176,41 +175,35 @@ Route::get('/admin/profile', function () {
 | ADMIN – KPI MANAGEMENT
 |--------------------------------------------------------------------------
 */
+Route::middleware([])->group(function () {
 
-Route::get('/admin/kpi/teaching_outreach', function () {
-    abort_if(session('role') !== 'admin', 403);
+    Route::get('/admin/kpi/{category}', function ($category) {
 
-    $kpis = Kpi::where('category', 'teaching')->get();
-    return view('admin.kpi.teaching_outreach', compact('kpis'));
+        abort_if(session('role') !== 'admin', 403);
+
+        return app(\App\Http\Controllers\AdminKpiController::class)
+            ->category($category);
+    });
+
+    Route::post('/admin/kpi/store', function (Request $request) {
+
+        abort_if(session('role') !== 'admin', 403);
+
+        return app(\App\Http\Controllers\AdminKpiController::class)
+            ->store($request);
+    });
+
+    Route::get('/admin/kpi/delete/{id}', function ($id) {
+
+        abort_if(session('role') !== 'admin', 403);
+
+        return app(\App\Http\Controllers\AdminKpiController::class)
+            ->delete($id);
+    });
+
 });
 
-Route::post('/admin/kpi/store', function (Request $request) {
-    abort_if(session('role') !== 'admin', 403);
-
-    $request->validate([
-        'item'       => 'required',
-        'description'=> 'nullable',
-        'max_marks'  => 'required|integer'
-    ]);
-
-    Kpi::create([
-        'category'    => 'teaching',
-        'item'        => $request->item,
-        'description' => $request->description,
-        'max_marks'   => $request->max_marks,
-        'created_by'  => session('user_id')
-    ]);
-
-    return response()->json(['success' => true]);
-
-});
-
-
-Route::get('/admin/kpi/delete/{id}', function ($id) {
-    abort_if(session('role') !== 'admin', 403);
-    Kpi::findOrFail($id)->delete();
-    return back()->with('success', 'KPI deleted');
-});
+Route::post('/admin/kpi/storeAll', [AdminKpiController::class, 'storeAll']);
 
 /*
 |--------------------------------------------------------------------------

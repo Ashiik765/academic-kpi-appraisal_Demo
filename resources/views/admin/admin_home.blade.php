@@ -200,11 +200,24 @@
             </li>
 
             <div class="submenu" id="kpiMenu">
-                <div onclick="loadPage('/admin/kpi/teaching_outreach')">a.Teaching & Outreach</div>
-                <div onclick="loadPage('/admin/kpi/research_innovation')">b.Research & Innovation ,commercialization and Consultancy</div>
-                <div onclick="loadPage('/admin/kpi/internal_processes')">c.Internal Processes</div>
-                <div onclick="loadPage('/admin/kpi/learning_growth')">d.Learning & Growth</div>
+                <div onclick="loadPage('/admin/kpi/teaching')">
+                    a. Teaching & Outreach
+                </div>
+
+                <div onclick="loadPage('/admin/kpi/research')">
+                    b. Research & Innovation
+                </div>
+
+                <div onclick="loadPage('/admin/kpi/internal')">
+                    c. Internal Processes
+                </div>
+
+                <div onclick="loadPage('/admin/kpi/learning')">
+                    d. Learning & Growth
+                </div>
             </div>
+
+            
 
             <li onclick="loadPage('/admin/users')">
                 <span><i class='bx bx-group'></i> Users</span>
@@ -291,7 +304,9 @@ loadDashboard();
 /* ===== AJAX PAGE LOADER ===== */
 function loadPage(url) {
 
-    fetch(url)
+    fetch(url,{
+        credentials: 'same-origin'  
+    })
         .then(res => {
             if (!res.ok) throw new Error("error");
             return res.text();
@@ -417,6 +432,42 @@ document.addEventListener("DOMContentLoaded", function(){
 </div>
 
 
+@yield('scripts')
+
+
+<script>
+function addRow() {
+    let table = document.getElementById('kpiTable');
+
+    if (!table) {
+        alert("Table not found");
+        return;
+    }
+
+    let row = table.insertRow(-1);
+
+    row.innerHTML = `
+        <td>
+            <input type="text" name="item[]" required style="width:100%; padding:5px;">
+        </td>
+        <td>
+            <input type="text" name="description[]" style="width:100%; padding:5px;">
+        </td>
+        <td>
+            <input type="number" name="max_marks[]" required style="width:100%; padding:5px;">
+        </td>
+        <td>
+            <button type="button" onclick="this.closest('tr').remove()" style="background:red;color:white;border:none;">
+                X
+            </button>
+        </td>
+    `;
+}
+</script>
+
 
 </body>
+
 </html>
+
+

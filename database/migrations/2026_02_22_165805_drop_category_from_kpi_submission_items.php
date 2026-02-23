@@ -11,18 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kpis', function (Blueprint $table) {
-            $table->id();
-
-            $table->string('category'); 
-            // teaching, research, internal, learning
-
-            $table->string('item');     
-            // KPI name
-
-            $table->integer('max_marks');
-
-            $table->timestamps();
+        Schema::table('kpi_submission_items', function (Blueprint $table) {
+            $table->dropColumn('category');
         });
     }
 
@@ -31,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kpis');
+        Schema::table('kpi_submission_items', function (Blueprint $table) {
+            //
+        });
     }
 };

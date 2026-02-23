@@ -6,14 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class KpiSubmissionItem extends Model
 {
+    // include all fields that will be updated via mass assignment from controller
     protected $fillable = [
         'submission_id',
         'kpi_id',
+        'self_score',    // staff-entered score
         'rating',
         'score',
         'evidence',
         'status',
-        'comment'
+        'comment',
+        'role'           // added by later migration
     ];
 
     public function submission()

@@ -152,12 +152,15 @@
         }
 
                 /* submenu animation */
-        .submenu{
-            display:none;
-            background:#2c3e50;
-            overflow:hidden;
+       .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
         }
 
+        .submenu.active {
+            max-height: 500px;
+        }
         .submenu div{
             padding:12px 45px;
             font-size:14px;
@@ -226,6 +229,23 @@
             animation:spin 0.8s linear infinite;
         }
 
+
+        .menu-toggle {
+            cursor: pointer;
+        }
+
+        .menu-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-row span {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         @keyframes spin{
             100%{ transform:rotate(360deg); }
         }
@@ -254,10 +274,46 @@
                 </a>
             </li>
 
+            <li onclick="toggleMenu('kpiSubMenu')" class="menu-toggle">
+                <div class="menu-row">
+                    <span><i class='bx bx-list-check'></i> KPI Entry</span>
+                    <i class='bx bx-chevron-down arrow'></i>
+                </div>
+            </li>
+
+            <ul class="submenu" id="kpiSubMenu">
+
+                <li>
+                    <a href="/staff/kpi/teaching">
+                        a. Teaching & Outreach
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/staff/kpi/research">
+                        b. Research & Innovation
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/staff/kpi/internal">
+                        c. Internal Processes
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/staff/kpi/learning">
+                        d. Learning & Growth
+                    </a>
+                </li>
+
+            </ul>
+
+
             <li>
-                <a href="/staff/kpi">
-                    <i class='bx bx-list-check'></i> KPI Entry
-                </a>
+                <a href="/staff/profile">
+                    <i class='bx bx-user'></i> Profile
+                </a>    
             </li>
 
             
@@ -281,7 +337,7 @@
             <span>{{ session('position') }}</span>
         </div>
 
-        <div class="content">
+        <div class="content" id="contentArea">
             @yield('content')
         </div>
 
@@ -303,14 +359,9 @@
 
 <script>
 
-
 function toggleMenu(menuId) {
     const menu = document.getElementById(menuId);
-    if (menu.style.display === "none" || menu.style.display === "") {
-        menu.style.display = "block";
-    } else {
-        menu.style.display = "none";
-    }
+    menu.classList.toggle("active");
 }
 
 
@@ -336,7 +387,7 @@ function loadDashboard() {
 
             <div class="card">
                 <h3>Quick Action</h3>
-                <a class="btn" onclick="loadPage('/staff/kpi')">Start KPI Entry</a>
+                <a href="/staff/kpi" class="btn">Start KPI Entry</a>
             </div>
         </div>
     `;
@@ -379,7 +430,6 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
 });
-
 
 </script>
 

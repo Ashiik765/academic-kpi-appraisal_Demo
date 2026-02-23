@@ -6,19 +6,19 @@ use Illuminate\Http\Request;
 use App\Models\Kpi;
 use App\Models\KpiSubmission;
 use App\Models\KpiSubmissionItem;
-use Illuminate\Support\Facades\Auth;
+
 
 class StaffKpiController extends Controller
 
 {
-    public function index()
+    public function category($category)
+
     {
         abort_if(session('role') !== 'staff', 403);
 
         $userId = session('user_id');
         $year = now()->year;
 
-        // Create submission if not exists
         $submission = KpiSubmission::firstOrCreate(
             [
                 'user_id' => $userId,
@@ -29,13 +29,10 @@ class StaffKpiController extends Controller
             ]
         );
 
-        // Load all master KPI items
-        $kpis = Kpi::all();
+        // Only load KPIs of selected category
+        $kpis = Kpi::whereRaw('LOWER(category) = ?', [strtolower($category)])->get();
 
-        // Create categories (THIS WAS MISSING)
-        $categories = $kpis->pluck('category')->unique();
-
-        // Load existing submission items
+        // Load submission items
         $submissionItems = KpiSubmissionItem::where('submission_id', $submission->id)
                             ->get()
                             ->keyBy('kpi_id');
@@ -43,97 +40,62 @@ class StaffKpiController extends Controller
         return view('staff.kpi.staff_kpi', compact(
             'kpis',
             'submission',
-            'categories',
-            'submissionItems'
+            'submissionItems',
+            'category'
         ));
     }
 
-    public function turnIn(Request $request)
-    {
-        abort_if(session('role') !== 'staff', 403);
-
-        $kpi = Kpi::findOrFail($request->kpi_id);
-
-        $submission = KpiSubmission::firstOrCreate(
-            [
-                'user_id' => session('user_id'),
-                'year' => now()->year
-            ],
-            [
-                'status' => 'pending'
-            ]
-        );
-
-        $filePath = null;
-
-        if ($request->hasFile('evidence')) {
-            $filePath = $request->file('evidence')
-                                ->store('evidence', 'public');
-        }
-
-        $score = $request->rating * $kpi->weight;
-
-        KpiSubmissionItem::updateOrCreate(
-            [
-                'submission_id' => $submission->id,
-                'kpi_id' => $kpi->id
-            ],
-            [
-                'category' => $kpi->category,
-                'rating' => $request->rating,
-                'score' => $score,
-                'evidence' => $filePath,
-                'status' => 'submitted'
-            ]
-        );
-
-        return redirect()->route('staff.kpi')
-                         ->with('success', 'KPI Turned In Successfully!');
-    }
-
-
-    
-    public function turnOff(Request $request)
-    {
-        abort_if(session('role') !== 'staff', 403);
-
-        KpiSubmissionItem::where('id', $request->item_id)
-            ->update(['status' => 'draft']);
-
-        return redirect()->route('staff.kpi')
-                         ->with('success', 'KPI Turned Off');
-    }
-
-
     public function save(Request $request)
-
     {
         abort_if(session('role') !== 'staff', 403);
+
+        // validate incoming data
+        $request->validate([
+            'submission_id' => 'required|exists:kpi_submissions,id',
+            'category'      => 'required|string',
+            'self_score'    => 'nullable|array',
+            'self_score.*'  => 'nullable|integer|min:0',
+            'action'        => 'nullable|string|in:save,submit'
+        ]);
 
         $submission = KpiSubmission::findOrFail($request->submission_id);
 
-        foreach ($request->self_score as $kpi_id => $score) {
+        // iterate through submitted scores (if any were provided)
+        foreach ($request->input('self_score', []) as $kpi_id => $score) {
+            $filePath = null;
+
+            if ($request->hasFile("evidence.$kpi_id")) {
+                $filePath = $request->file("evidence.$kpi_id")
+                                    ->store('evidence', 'public');
+            }
 
             KpiSubmissionItem::updateOrCreate(
                 [
                     'submission_id' => $submission->id,
-                    'kpi_id' => $kpi_id
+                    'kpi_id'        => $kpi_id
                 ],
                 [
+                    'category'   => $request->category,
                     'self_score' => $score,
-                    'comment' => $request->comment[$kpi_id] ?? null
+                    'evidence'   => $filePath,
+                    'status'     => $request->action === 'submit' ? 'submitted' : 'draft'
                 ]
             );
         }
 
-        return back()->with('success', 'KPI saved successfully.');
+        // if the user chose to submit the entire dimension, update submission status
+        if ($request->action === 'submit') {
+            $submission->update(['status' => 'submitted']);
+            return back()->with('success', 'Dimension submitted successfully.');
+        }
+
+        return back()->with('success', 'Draft saved successfully.');
     }
 
 
     public function submit($id)
+    
     {
-        abort_if(session('role') !== 'staff', 403);
-
         $submission = KpiSubmission::findOrFail($id);
 
         $submission->update([
