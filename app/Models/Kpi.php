@@ -8,10 +8,8 @@ class Kpi extends Model
 {
     protected $fillable = [
         'category',
-        'item',
-        'description',
-        'weight',
-        'max_marks',
+        'criteria',
+        'weightage',
         'created_by'
     ];
 
@@ -24,4 +22,3 @@ class Kpi extends Model
     }
 
 }
-

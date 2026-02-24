@@ -27,18 +27,15 @@ class AdminKpiController extends Controller
     {
         $category = $request->category;
 
-        $items = $request->item;
-        $descriptions = $request->description;
-        $marks = $request->max_marks;
+        $criteria = $request->criteria;
+        $weights = $request->weightage;
 
-        if ($items) {
-            foreach ($items as $index => $item) {
-
+        if ($criteria) {
+            foreach ($criteria as $index => $crit) {
                 Kpi::create([
                     'category' => $category,
-                    'item' => $item,
-                    'description' => $descriptions[$index] ?? null,
-                    'max_marks' => $marks[$index],
+                    'criteria' => $crit,
+                    'weightage' => $weights[$index],
                 ]);
             }
         }

@@ -14,30 +14,29 @@ class KpiSeeder extends Seeder
         $data = [
 
             // TEACHING
-            ['teaching','Innovative teaching methods',2,5],
-            ['teaching','Student feedback score',2,5],
-            ['teaching','Course material preparation',1,5],
+            ['teaching','Innovative teaching methods',5],
+            ['teaching','Student feedback score',5],
+            ['teaching','Course material preparation',5],
 
             // RESEARCH
-            ['research','Journal publications',3,10],
-            ['research','Conference papers',2,5],
-            ['research','Research grants',3,10],
+            ['research','Journal publications',10],
+            ['research','Conference papers',5],
+            ['research','Research grants',10],
 
             // INTERNAL
-            ['internal','Committee participation',1,5],
-            ['internal','Department contributions',1,5],
+            ['internal','Committee participation',5],
+            ['internal','Department contributions',5],
 
             // LEARNING
-            ['learning','Workshops attended',1,5],
-            ['learning','Certifications completed',2,5],
+            ['learning','Workshops attended',5],
+            ['learning','Certifications completed',5],
         ];
 
         foreach ($data as $d) {
             Kpi::create([
                 'category'   => $d[0],
-                'item'       => $d[1],
-                'weight'     => $d[2],
-                'max_marks'  => $d[3],
+                'criteria'   => $d[1],
+                'weightage'  => $d[2],
                 'created_by' => $adminId
             ]);
         }

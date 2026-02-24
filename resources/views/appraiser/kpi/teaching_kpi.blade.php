@@ -161,7 +161,7 @@
             </td>
 
             {{-- KPI Title --}}
-            <td>{{ $item->kpi->item ?? '-' }}</td>
+            <td>{{ $item->kpi->criteria ?? '-' }}</td>
 
             {{-- Evidence --}}
             <td>

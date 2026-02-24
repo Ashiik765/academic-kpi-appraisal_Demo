@@ -448,13 +448,10 @@ function addRow() {
 
     row.innerHTML = `
         <td>
-            <input type="text" name="item[]" required style="width:100%; padding:5px;">
+            <input type="text" name="criteria[]" required style="width:100%; padding:5px;">
         </td>
         <td>
-            <input type="text" name="description[]" style="width:100%; padding:5px;">
-        </td>
-        <td>
-            <input type="number" name="max_marks[]" required style="width:100%; padding:5px;">
+            <input type="number" name="weightage[]" required style="width:100%; padding:5px;">
         </td>
         <td>
             <button type="button" onclick="this.closest('tr').remove()" style="background:red;color:white;border:none;">

@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Http\Request;
@@ -175,35 +176,15 @@ Route::get('/admin/profile', function () {
 | ADMIN – KPI MANAGEMENT
 |--------------------------------------------------------------------------
 */
-Route::middleware([])->group(function () {
+Route::prefix('admin/kpi')->group(function () {
 
-    Route::get('/admin/kpi/{category}', function ($category) {
+    Route::get('/{category}', [AdminKpiController::class, 'category']);
 
-        abort_if(session('role') !== 'admin', 403);
+    Route::post('/storeAll', [AdminKpiController::class, 'storeAll']);
 
-        return app(\App\Http\Controllers\AdminKpiController::class)
-            ->category($category);
-    });
-
-    Route::post('/admin/kpi/store', function (Request $request) {
-
-        abort_if(session('role') !== 'admin', 403);
-
-        return app(\App\Http\Controllers\AdminKpiController::class)
-            ->store($request);
-    });
-
-    Route::get('/admin/kpi/delete/{id}', function ($id) {
-
-        abort_if(session('role') !== 'admin', 403);
-
-        return app(\App\Http\Controllers\AdminKpiController::class)
-            ->delete($id);
-    });
+    Route::get('/delete/{id}', [AdminKpiController::class, 'delete']);
 
 });
-
-Route::post('/admin/kpi/storeAll', [AdminKpiController::class, 'storeAll']);
 
 /*
 |--------------------------------------------------------------------------

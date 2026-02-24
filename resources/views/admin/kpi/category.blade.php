@@ -1,4 +1,3 @@
-
 <div class="card">
 
     <h3 style="text-transform:capitalize;">
@@ -6,7 +5,12 @@
     </h3>
 
     @if(session('success'))
-        <p style="color:green">{{ session('success') }}</p>
+    <div id="successPopup" class="success-popup">
+        <div class="success-box">
+            <span class="success-icon">✔</span>
+            <span>KPI Added Successfully</span>
+        </div>
+    </div>
     @endif
 
     <form method="POST" action="/admin/kpi/storeAll">
@@ -16,9 +20,9 @@
 
         <table style="width:100%; margin-top:20px; border-collapse:collapse;" id="kpiTable">
             <tr style="background:#2c3e50; color:white;">
-                <th style="padding:10px;">Item</th>
-                <th>Description</th>
-                <th>Max Marks</th>
+                
+                <th style="padding:10px;">Criteria</th>
+                <th>Weightage</th>
                 <th>Action</th>
             </tr>
 
@@ -40,24 +44,22 @@
     </form>
 </div>
 
-
-
 <div class="card" style="margin-top:25px;">
     <h3>Saved KPI List</h3>
 
     <table style="width:100%; border-collapse:collapse;">
         <tr style="background:#27ae60; color:white;">
-            <th style="padding:10px;">Item</th>
-            <th>Description</th>
-            <th>Max Marks</th>
+            <th style="padding:10px; width:50px;">ID</th>
+            <th style="padding:10px;">Criteria</th>
+            <th>Weightage</th>
             <th>Action</th>
         </tr>
 
-        @forelse($kpis as $kpi)
+        @forelse($kpis as $index => $kpi)
         <tr>
-            <td style="padding:10px;">{{ $kpi->item }}</td>
-            <td>{{ $kpi->description }}</td>
-            <td>{{ $kpi->max_marks }}</td>
+            <td style="padding:10px; text-align:center;">{{ $index + 1 }}</td>
+            <td style="padding:10px;">{{ $kpi->criteria }}</td>
+            <td>{{ $kpi->weightage }}</td>
             <td>
                 <a href="/admin/kpi/delete/{{ $kpi->id }}"
                    onclick="return confirm('Delete this KPI?')"
@@ -74,31 +76,30 @@
     </table>
 </div>
 
-
-
-{{-- <script>
+<script>
 function addRow() {
     let table = document.getElementById('kpiTable');
-
+    let rowCount = table.rows.length;
+    
+    // Calculate new ID (rowCount because header is row 0)
+    let newId = rowCount;
+    
     let row = table.insertRow(-1);
 
     row.innerHTML = `
+        <td style="padding:10px; text-align:center; font-weight:bold;">${newId}</td>
         <td>
-            <input type="text" name="item[]" required style="width:100%; padding:5px;">
+            <input type="text" name="criteria[]" required style="width:100%; padding:5px;">
         </td>
         <td>
-            <input type="text" name="description[]" style="width:100%; padding:5px;">
-        </td>
-        <td>
-            <input type="number" name="max_marks[]" required style="width:100%; padding:5px;">
+            <input type="number" name="weightage[]" required style="width:100%; padding:5px;">
         </td>
         <td>
             <button type="button" onclick="this.closest('tr').remove()"
-                    style="background:red; color:white; border:none;">
+                    style="background:red; color:white; border:none; padding:51px 10px;">
                 X
             </button>
         </td>
     `;
 }
-</script> --}}
-
+</script>
