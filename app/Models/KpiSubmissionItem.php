@@ -17,6 +17,7 @@ class KpiSubmissionItem extends Model
         'status',
         'comment',
         'role'           // added by later migration
+        
     ];
 
     public function submission()
@@ -26,6 +27,7 @@ class KpiSubmissionItem extends Model
 
     public function kpi()
     {
-        return $this->belongsTo(Kpi::class, 'kpi_id');
+        return $this->belongsTo(\App\Models\Kpi::class, 'kpi_id');
     }
+
 }

@@ -118,11 +118,18 @@ Route::get('/appraiser/profile', function () {
     return view('appraiser.profile');
 });
 
-Route::get('/appraiser/kpi/teaching_kpi', 
-    [AppraiserKpiController::class, 'index']
-)->name('appraiser.kpi.teaching_kpi');
+Route::prefix('appraiser')->group(function () {
 
+    Route::get('/home', [AppraiserKpiController::class, 'index'])
+        ->name('appraiser.home');
 
+    Route::get('/kpi', [AppraiserKpiController::class, 'showAll'])
+        ->name('appraiser.kpi');
+
+    Route::post('/kpi/update/{id}', [AppraiserKpiController::class, 'updateScore'])
+        ->name('appraiser.kpi.update');
+
+});
 /*
 |--------------------------------------------------------------------------
 | ADMIN ROUTES
@@ -149,7 +156,9 @@ Route::post('/admin/users/store', function (Request $request) {
         'email' => 'required|email|unique:users',
         'role' => 'required|in:staff,appraiser,admin',
         'password' => 'required|min:6|confirmed',
-        'position' => 'required_if:role,staff'
+        'position' => 'required_if:role,staff',
+        'intake' => 'required_if:role,staff',
+        'intake_year' => 'required_if:role,staff|numeric'
 
     ]);
 
@@ -158,7 +167,10 @@ Route::post('/admin/users/store', function (Request $request) {
         'email' => $request->email,
         'password' => Hash::make($request->password), // ⭐ VERY IMPORTANT
         'role' => $request->role,
-        'position' => $request->position
+        'position' => $request->position,
+        'intake' => $request->intake,
+        'intake_year' => $request->intake_year
+
     ]);
 
     return redirect('/admin/home')->with('success', 'User added successfully');

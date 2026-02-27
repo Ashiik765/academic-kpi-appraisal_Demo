@@ -45,6 +45,10 @@
             padding: 14px 24px;
             transition: 0.2s;
             font-size: 14px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .menu li:hover {
@@ -59,13 +63,42 @@
             align-items: center;
         }
 
-         .submenu {
-            background: #2c3e50;
+        .menu-toggle .arrow {
+            transition: transform 0.3s ease;
+        }
+        .menu-toggle.active .arrow {
+            transform: rotate(180deg);
         }
 
-        .submenu li {
-            padding-left: 40px;
+         .submenu {
+            background: #2c3e50;
+            list-style:none;
+            padding:0;
+            margin:0;
+            max-height:0;
+            overflow:hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .submenu.active {
+            max-height: 500px;
+        }
+        .submenu li a {
+            display:block;
+            padding: 14px 24px;
             font-size: 13px;
+            color:white;
+            text-decoration:none;
+        }
+        .submenu li a:hover {
+            background:#3b4b5b;
+        }
+
+        .menu-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
         }
 
 
@@ -158,6 +191,19 @@
             transition: max-height 0.3s ease;
         }
 
+        .submenu li a {
+            color: white !important;
+            text-decoration: none;
+            display: block;
+            padding: 8px 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .submenu li a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
         .submenu.active {
             max-height: 500px;
         }
@@ -169,6 +215,11 @@
 
         .submenu div:hover{
             background:#3b4b5b;
+        }
+
+        .submenu div a{
+            color:white;
+            text-decoration:none;
         }
 
 
@@ -274,40 +325,34 @@
                 </a>
             </li>
 
-            <li onclick="toggleMenu('kpiSubMenu')" class="menu-toggle">
+            <li onclick="toggleMenu('kpiSubMenu', this)" class="menu-toggle">
                 <div class="menu-row">
                     <span><i class='bx bx-list-check'></i> KPI Entry</span>
                     <i class='bx bx-chevron-down arrow'></i>
                 </div>
+                <ul class="submenu" id="kpiSubMenu">
+                    <li>
+                        <a href="/staff/kpi/teaching">
+                            a. Teaching & Outreach
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/staff/kpi/research">
+                            b. Research & Innovation
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/staff/kpi/internal">
+                            c. Internal Processes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/staff/kpi/learning">
+                            d. Learning & Growth
+                        </a>
+                    </li>
+                </ul>
             </li>
-
-            <ul class="submenu" id="kpiSubMenu">
-
-                <li>
-                    <a href="/staff/kpi/teaching">
-                        a. Teaching & Outreach
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/staff/kpi/research">
-                        b. Research & Innovation
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/staff/kpi/internal">
-                        c. Internal Processes
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/staff/kpi/learning">
-                        d. Learning & Growth
-                    </a>
-                </li>
-
-            </ul>
 
 
             <li>
@@ -359,9 +404,12 @@
 
 <script>
 
-function toggleMenu(menuId) {
+function toggleMenu(menuId, toggleElement) {
     const menu = document.getElementById(menuId);
     menu.classList.toggle("active");
+    if (toggleElement) {
+        toggleElement.classList.toggle("active");
+    }
 }
 
 

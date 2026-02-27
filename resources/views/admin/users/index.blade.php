@@ -69,14 +69,17 @@
                 <th style="padding:12px;">Name</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Position</th>
+                <th>Intake</th>
+                <th>Year</th>
                 <th width="140" style="text-align:center;">Action</th>
             </tr>
         </thead>
 
         <tbody>
-        @forelse($users as $user)
-
-            <tr data-role="{{ $user->role }}" style="border-bottom:1px solid #eee;">
+            @forelse($users as $user)
+            
+                <tr data-role="{{ $user->role }}" style="border-bottom:1px solid #eee;">
 
                 <td style="padding:10px;">{{ ucfirst($user->name) }}</td>
 
@@ -92,10 +95,12 @@
                     </span>
                 </td>
 
+                <td>{{ $user->position ?? '-' }}</td>
+                <td>{{ $user->intake ?? '-' }}</td>
+                <td>{{ $user->intake_year ?? '-' }}</td>
+
                 <td style="text-align:center;">
-
                     @if($user->role !== 'admin')
-
                         <button
                             onclick="deleteUser({{ $user->id }})"
                             style="
@@ -107,18 +112,15 @@
                                 cursor:pointer;">
                             Delete
                         </button>
-
                     @else
                         <span style="color:gray;">Protected</span>
                     @endif
-
                 </td>
-
             </tr>
 
         @empty
             <tr>
-                <td colspan="4" style="text-align:center; padding:20px;">
+                <td colspan="7" style="text-align:center; padding:20px;">
                     No users found
                 </td>
             </tr>

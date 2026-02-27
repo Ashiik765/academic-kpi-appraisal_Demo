@@ -49,7 +49,7 @@
 
     <table style="width:100%; border-collapse:collapse;">
         <tr style="background:#27ae60; color:white;">
-            <th style="padding:10px; width:50px;">ID</th>
+            <th style="padding:10px; width:50px;">No</th>
             <th style="padding:10px;">Criteria</th>
             <th>Weightage</th>
             <th>Action</th>
@@ -103,3 +103,4 @@ function addRow() {
     `;
 }
 </script>
+

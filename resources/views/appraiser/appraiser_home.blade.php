@@ -49,15 +49,30 @@
             background:#2980b9;
         }
 
-        /* submenu animation */
-        .submenu{
-            display:none;
-            background:#2c3e50;
-            overflow:hidden;
+
+                /* submenu animation */
+       .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
         }
 
-        
+        .submenu li a {
+            color: white !important;
+            text-decoration: none;
+            display: block;
+            padding: 8px 0;
+            transition: opacity 0.3s ease;
+        }
 
+        .submenu li a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .submenu.active {
+            max-height: 500px;
+        }
         .submenu div{
             padding:12px 45px;
             font-size:14px;
@@ -66,6 +81,11 @@
 
         .submenu div:hover{
             background:#3b4b5b;
+        }
+
+        .submenu div a{
+            color:white;
+            text-decoration:none;
         }
 
         /* MAIN */
@@ -180,11 +200,10 @@
     </li>
 
     <li>
-        <a href="{{ url('/appraiser/kpi/teaching_kpi') }}" style="color: white; text-decoration: none;">
+        <a href="/appraiser/kpi">
             <i class='bx bx-list-check'></i> KPI Entry
         </a>
     </li>
-
 
 
     <li onclick="loadPage('/appraiser/profile')">
@@ -232,72 +251,128 @@
 
 
 <script>
-function toggleMenu(id){
-    const m=document.getElementById(id);
-    m.style.display=m.style.display==='block'?'none':'block';
-}
 
-function goTo(url){
-    window.location=url;
-}
-
-/* ⭐ universal loader */
-function loadPage(url){
-
-    const area=document.getElementById('contentArea');
-
-    area.innerHTML="<div class='loader'>Loading...</div>";
-
-    fetch(url)
-    .then(res=>{
-        if(!res.ok) throw new Error();
-        return res.text();
-    })
-    .then(html=>{
-        area.innerHTML=html;
-    })
-    .catch(()=>{
-        area.innerHTML="<div class='card'>⚠ Failed to load page</div>";
-    });
-}
-
-function openLogout(){
-    document.getElementById('logoutModal').style.display='flex';
-}
-
-function closeLogout(){
-    document.getElementById('logoutModal').style.display='none';
-}
-
-function confirmLogout(){
-    window.location='/logout';
-}
-
-
-/* Hide loader when page fully loaded */
-window.addEventListener("load", function(){
-    document.getElementById("pageLoader").classList.add("loader-hide");
-});
-
-
-/* Show loader when clicking links or submitting forms */
-document.addEventListener("DOMContentLoaded", function(){
-
-    /* for all links */
-    document.querySelectorAll("a").forEach(link=>{
-        link.addEventListener("click", function(){
-            document.getElementById("pageLoader").classList.remove("loader-hide");
+    function loadTeachingKpi(submissionId) {
+    const area = document.getElementById('contentArea');
+    area.innerHTML = "<div class='loader'>Loading KPI data...</div>";
+    
+    // Show page loader
+    document.getElementById("pageLoader").classList.remove("loader-hide");
+    
+    // Make AJAX request to get the teaching KPI page
+    fetch(`/appraiser/kpi/teaching/${submissionId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(html => {
+            area.innerHTML = html;
+            document.getElementById("pageLoader").classList.add("loader-hide");
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            area.innerHTML = "<div class='card' style='padding:20px; text-align:center; color:#dc2626;'>⚠ Failed to load KPI data. Please try again.</div>";
+            document.getElementById("pageLoader").classList.add("loader-hide");
         });
-    });
+}
 
-    /* for all forms */
-    document.querySelectorAll("form").forEach(form=>{
-        form.addEventListener("submit", function(){
-            document.getElementById("pageLoader").classList.remove("loader-hide");
+// Also update the existing loadPage function to handle regular pages
+    function loadPage(url) {
+        const area = document.getElementById('contentArea');
+        area.innerHTML = "<div class='loader'>Loading...</div>";
+        document.getElementById("pageLoader").classList.remove("loader-hide");
+        
+        fetch(url)
+
+        .then(response => {
+                if (!response.ok) throw new Error();
+                return response.text();
+            })
+            .then(html => {
+                area.innerHTML = html;
+                document.getElementById("pageLoader").classList.add("loader-hide");
+            })
+            .catch(() => {
+                area.innerHTML = "<div class='card'>⚠ Failed to load page</div>";
+                document.getElementById("pageLoader").classList.add("loader-hide");
         });
+
+    }
+
+
+    function toggleMenu(id){
+        const menu = document.getElementById(id);
+        menu.classList.toggle("active");
+    }
+
+    function goTo(url) {
+    document.getElementById("pageLoader").classList.remove("loader-hide");
+    window.location.href = url;
+    }
+
+    /* ⭐ universal loader */
+    function loadPage(url){
+
+        const area=document.getElementById('contentArea');
+
+        area.innerHTML="<div class='loader'>Loading...</div>";
+
+        fetch(url)
+        .then(res=>{
+            if(!res.ok) throw new Error();
+            return res.text();
+        })
+        .then(html=>{
+            area.innerHTML=html;
+        })
+        .catch(()=>{
+            area.innerHTML="<div class='card'>⚠ Failed to load page</div>";
+        });
+    }
+
+    function openLogout(){
+        document.getElementById('logoutModal').style.display='flex';
+    }
+
+    function closeLogout(){
+        document.getElementById('logoutModal').style.display='none';
+    }
+
+    function confirmLogout(){
+        window.location='/logout';
+    }
+
+
+    /* Hide loader when page fully loaded */
+    window.addEventListener("load", function(){
+        document.getElementById("pageLoader").classList.add("loader-hide");
     });
 
-});
+
+    /* Show loader when clicking links or submitting forms */
+    document.addEventListener("DOMContentLoaded", function(){
+
+        /* for all links */
+        document.querySelectorAll("a").forEach(link=>{
+            link.addEventListener("click", function(){
+                document.getElementById("pageLoader").classList.remove("loader-hide");
+            });
+        });
+
+        /* for all forms */
+        document.querySelectorAll("form").forEach(form=>{
+            form.addEventListener("submit", function(){
+                document.getElementById("pageLoader").classList.remove("loader-hide");
+            });
+        });
+
+    });
+
+
+
+
 
 
 </script>

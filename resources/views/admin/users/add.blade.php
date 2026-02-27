@@ -48,7 +48,24 @@
                 <option value="lecture2">Lecture 2</option>
                 <option value="lecture3">Lecture 3</option>
                 <option value="lecture4">Lecture 4</option>
+                <option value="nonacademic">Non Academic</option>
             </select>
+            <!-- INTAKE -->
+            <div style="margin-top:15px;">
+                <label>Intake</label>
+                <select name="intake" class="input">
+                    <option value="">Select Intake</option>
+                    <option value="Jan">January</option>
+                    <option value="May">May</option>
+                    <option value="Sep">September</option>
+                </select>
+            </div>
+
+            <!-- INTAKE YEAR -->
+            <div style="margin-top:15px;">
+                <label>Intake Year</label>
+                <input type="number" name="intake_year" class="input" placeholder="e.g. 2023">
+            </div>
         </div>
 
 
