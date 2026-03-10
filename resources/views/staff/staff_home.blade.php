@@ -70,28 +70,52 @@
             transform: rotate(180deg);
         }
 
-         .submenu {
-            background: #2c3e50;
-            list-style:none;
-            padding:0;
-            margin:0;
-            max-height:0;
-            overflow:hidden;
-            transition: max-height 0.3s ease;
+        /* Horizontal submenu: appears to the right of the sidebar */
+        .menu-toggle { position: relative; }
+
+        .submenu {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            align-items: center;
+            background: linear-gradient(180deg,#243640,#213241);
+            padding: 8px;
+            margin: 0 0 0 8px;
+            border-radius: 8px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+            transform-origin: left top;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            white-space: nowrap;
+            z-index: 50;
         }
 
         .submenu.active {
-            max-height: 500px;
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(2px) scale(1);
         }
+
+        .submenu li { margin: 0; }
+
         .submenu li a {
-            display:block;
-            padding: 14px 24px;
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
             font-size: 13px;
-            color:white;
-            text-decoration:none;
+            color: #e6f1fb;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.12s ease, color 0.12s ease;
         }
+
         .submenu li a:hover {
-            background:#3b4b5b;
+            background: rgba(255,255,255,0.03);
+            color: #fff;
         }
 
         .menu-row {
@@ -184,29 +208,36 @@
             justify-content: center;
         }
 
-                /* submenu animation */
-       .submenu {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
+       
+        /* Submenu inside sidebar */
+        .submenu {
+            display: none;
+            list-style: none;
+            padding-left: 40px;   /* indentation */
+            margin: 0;
+            background: #2c3e50;  /* slightly lighter than sidebar */
+        }
+
+        .submenu li {
+            padding: 8px 0;
         }
 
         .submenu li a {
-            color: white !important;
+            color: #e6f1fb;
             text-decoration: none;
+            font-size: 13px;
             display: block;
-            padding: 8px 0;
-            transition: opacity 0.3s ease;
         }
 
         .submenu li a:hover {
-            opacity: 0.8;
-            text-decoration: underline;
+            color: white;
         }
 
+        /* Show submenu */
         .submenu.active {
-            max-height: 500px;
+            display: block;
         }
+                    
         .submenu div{
             padding:12px 45px;
             font-size:14px;
@@ -330,28 +361,14 @@
                     <span><i class='bx bx-list-check'></i> KPI Entry</span>
                     <i class='bx bx-chevron-down arrow'></i>
                 </div>
+
                 <ul class="submenu" id="kpiSubMenu">
-                    <li>
-                        <a href="/staff/kpi/teaching">
-                            a. Teaching & Outreach
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/staff/kpi/research">
-                            b. Research & Innovation
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/staff/kpi/internal">
-                            c. Internal Processes
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/staff/kpi/learning">
-                            d. Learning & Growth
-                        </a>
-                    </li>
+                    <li><a href="/staff/kpi/teaching">a. Teaching & Outreach</a></li>
+                    <li><a href="/staff/kpi/research">b. Research & Innovation</a></li>
+                    <li><a href="/staff/kpi/internal">c. Internal Processes</a></li>
+                    <li><a href="/staff/kpi/learning">d. Learning & Growth</a></li>
                 </ul>
+
             </li>
 
 
@@ -379,16 +396,20 @@
 
         <div class="navbar">
             <h2>Welcome, {{ ucfirst(session('name')) }}</h2>
-            <span>{{ session('position') }}</span>
+            <span>{{ session('staff_type') }}</span>
         </div>
 
         <div class="content" id="contentArea">
+
             @yield('content')
+            
         </div>
 
     </div>
 
 </div>
+
+
 <!-- ===== LOGOUT MODAL ===== -->
 <div class="modal" id="logoutModal">
     <div class="modal-box">
@@ -452,6 +473,8 @@ function closeLogoutModal() {
 function confirmLogout() {
     window.location.href = "/logout";
 }
+
+
 
 
 /* Hide loader when page fully loaded */

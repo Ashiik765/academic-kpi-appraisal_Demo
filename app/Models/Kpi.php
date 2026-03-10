@@ -10,7 +10,7 @@ class Kpi extends Model
         'category',
         'criteria',
         'weightage',
-        'created_by'
+        'staff_type'
     ];
 
     // relation: many submissions

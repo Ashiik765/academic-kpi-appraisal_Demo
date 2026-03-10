@@ -16,33 +16,77 @@
             width: 260px;
             background: #1f2d3d;
             color: white;
-            padding: 20px 0;
+            padding: 20px 10px;
+            font-size: 18px;
+            margin-left: -20px;
         }
 
         .sidebar h3 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            letter-spacing: 1px;
+            margin-left: 10px;
         }
 
-        .menu { list-style: none; padding: 0; margin: 0; }
-
         .menu li {
-            padding: 14px 20px;
+            padding: 10px 5px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: 0.2s ease;
+            margin-left: 5px;
         }
 
-        .menu li:hover { background: #34495e; }
+        .menu li:hover {
+            background: #2c3e50;
+        }
 
-        .submenu { display: none; background: #2c3e50; }
-        .submenu div {
-            padding: 12px 40px;
+        .submenu {
+            display: none;
+            background: #243447;
+        }
+
+        .nested-header {
+            padding: 8px 15px;
             cursor: pointer;
-            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            background: #243447;
         }
-        .submenu div:hover { background: #3b4b5b; }
+
+        .nested-header:hover {
+            background: #2f4257;
+        }
+
+        .nested-submenu {
+            display: none;
+            background: #2c3e50;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            padding: 4px 0;
+        }
+
+        .nested-item {
+            padding: 10px 25px !important;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            margin-left: 10px;
+            margin-bottom: 6px;
+        }
+
+        .nested-item:hover {
+            background: #3b4b5b;
+        }
+
+        .nested-item i {
+            margin-right: 6px;
+            font-size: 13px;
+        }
 
         .main { flex: 1; display: flex; flex-direction: column; }
 
@@ -166,9 +210,13 @@
             animation:spin 0.8s linear infinite;
         }
 
+
+
         @keyframes spin{
             100%{ transform:rotate(360deg); }
         }
+
+
 
         /* hidden state */
         .loader-hide{
@@ -185,7 +233,7 @@
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR - KPI Management Submenu (Updated with nice button arrangement) -->
     <div class="sidebar">
         <h3>Admin Panel</h3>
 
@@ -200,20 +248,48 @@
             </li>
 
             <div class="submenu" id="kpiMenu">
-                <div onclick="loadPage('/admin/kpi/teaching')">
-                    a. Teaching & Outreach
+                <!-- Academic KPI with nested submenu -->
+                <div class="nested-menu">
+                    <div class="nested-header" onclick="toggleMenu('academicSubmenu')">
+                        <span><i class='bx bxs-graduation'></i> Academic KPI</span>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+                    <div class="nested-submenu" id="academicSubmenu">
+                        <div class="nested-item" onclick="loadPage('/admin/kpi/academic/teaching')">
+                            <i class='bx bx-chalkboard'></i> a. Teaching & Outreach
+                        </div>
+                        <div class="nested-item" onclick="loadPage('/admin/kpi/academic/research')">
+                            <i class='bx bx-flask'></i> b. Research & Innovation
+                        </div>
+                        <div class="nested-item" onclick="loadPage('/admin/kpi/academic/internal')">
+                            <i class='bx bx-cog'></i> c. Internal Processes
+                        </div>
+                        <div class="nested-item" onclick="loadPage('/admin/kpi/academic/learning')">
+                            <i class='bx bx-line-chart'></i> d. Learning & Growth
+                        </div>
+                    </div>
                 </div>
 
-                <div onclick="loadPage('/admin/kpi/research')">
-                    b. Research & Innovation
-                </div>
-
-                <div onclick="loadPage('/admin/kpi/internal')">
-                    c. Internal Processes
-                </div>
-
-                <div onclick="loadPage('/admin/kpi/learning')">
-                    d. Learning & Growth
+                <!-- Non-Academic KPI with nested submenu -->
+                <div class="nested-menu">
+                    <div class="nested-header" onclick="toggleMenu('nonAcademicSubmenu')">
+                        <span><i class='bx bxs-briefcase'></i> Non-Academic KPI</span>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+                    <div class="nested-submenu" id="nonAcademicSubmenu">
+                        <div class="nested-item" onclick="loadPage('/admin/kpi/nonteaching')">
+                            <i class='bx bx-chalkboard'></i> a. Teaching & Outreach
+                        </div>
+                        <div class="nested-item" onclick="loadPage('/admin/kpi/non-academic/research')">
+                            <i class='bx bx-flask'></i> b. Research & Innovation
+                        </div>
+                        <div class="nested-item" onclick="loadPage('/admin/kpi/non-academic/internal')">
+                            <i class='bx bx-cog'></i> c. Internal Processes
+                        </div>
+                        <div class="nested-item" onclick="loadPage('/admin/kpi/non-academic/learning')">
+                            <i class='bx bx-line-chart'></i> d. Learning & Growth
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -226,8 +302,6 @@
             <li onclick="openLogoutModal()">
                 <span><i class='bx bx-log-out'></i> Logout</span>
             </li>
-
-
         </ul>
     </div>
 
@@ -243,8 +317,6 @@
 
 </div>
 
-
-
 <!-- ===== LOGOUT MODAL ===== -->
 <div id="logoutModal" class="modal">
     <div class="modal-box">
@@ -254,8 +326,6 @@
         <button onclick="closeLogoutModal()" class="btn">Cancel</button>
     </div>
 </div>
-
-
 
 <script>
 /* ===== DASHBOARD (SINGLE SOURCE) ===== */
@@ -326,8 +396,6 @@ function loadPage(url) {
         });
 }
 
-
-
 /* ===== UI HELPERS ===== */
 function toggleMenu(id) {
     const menu = document.getElementById(id);
@@ -342,8 +410,6 @@ function closeLogoutModal() {
     document.getElementById('logoutModal').style.display = 'none';
 }
 
-
-
 function showToast(msg) {
     const t = document.getElementById('toast');
     t.innerText = msg;
@@ -351,8 +417,6 @@ function showToast(msg) {
     setTimeout(() => t.style.display = 'none', 2500);
 }
 </script>
-
-
 
 <script>
 function attachAddUserForm() {
@@ -399,12 +463,10 @@ function attachAddUserForm() {
     }
 }
 
-
 /* Hide loader when page fully loaded */
 window.addEventListener("load", function(){
     document.getElementById("pageLoader").classList.add("loader-hide");
 });
-
 
 /* Show loader when clicking links or submitting forms */
 document.addEventListener("DOMContentLoaded", function(){
@@ -431,9 +493,7 @@ document.addEventListener("DOMContentLoaded", function(){
     <div class="loader-spinner"></div>
 </div>
 
-
 @yield('scripts')
-
 
 <script>
 function addRow() {
@@ -462,9 +522,5 @@ function addRow() {
 }
 </script>
 
-
 </body>
-
 </html>
-
-

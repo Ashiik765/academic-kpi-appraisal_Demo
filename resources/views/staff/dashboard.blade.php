@@ -24,4 +24,24 @@
     </div>
 </div>
 
+@if(isset($reviewed) && $reviewed)
+
+<div class="card" style="background:#e8f8f5">
+
+    <h3>🔔 KPI Review Completed</h3>
+
+    <p>Your KPI has been reviewed by the appraiser.</p>
+
+    <a href="{{ route('staff.kpi.result') }}" class="btn btn-primary">
+        View Result
+    </a>
+
+</div>
+
+
+
+
+@endif
+
+
 @endsection

@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StaffKpiController;
 use App\Http\Controllers\AppraiserKpiController;
 use App\Http\Controllers\AdminKpiController;
+use App\Http\Controllers\StaffResultController;
 
 
 
@@ -65,7 +66,7 @@ Route::post('/login', function (Request $request) {
         'name'     => $user->name,
         'email'    => $user->email,
         'role'     => $user->role,
-        'position' => $user->position
+        'staff_type' => $user->staff_type
     ]);
 
     return redirect('/' . $user->role . '/home');
@@ -77,9 +78,20 @@ Route::post('/login', function (Request $request) {
 |--------------------------------------------------------------------------
 */
 Route::get('/staff/home', function () {
+
     abort_if(session('role') !== 'staff', 403);
-    return view('staff.dashboard');
+
+    $submission = \App\Models\KpiSubmission::where('user_id', session('user_id'))
+        ->latest()
+        ->first();
+
+    $reviewed = $submission && $submission->status === 'reviewed';
+
+    return view('staff.dashboard', compact('reviewed'));
+
 });
+
+Route::get('/staff/dashboard', [StaffKpiController::class, 'dashboard'])->name('staff.dashboard');
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +106,12 @@ Route::get('/staff/profile', function () {
     return view('staff.profile');
 });
 
+Route::get('/staff/kpi/result', [StaffResultController::class,'index'])
+    ->name('staff.kpi.result');
+
+Route::get('/staff/kpi/result/print', [StaffResultController::class,'print'])
+    ->name('staff.kpi.print');
+
 
 Route::get('/staff/kpi/{category}', [StaffKpiController::class, 'category']);
 Route::post('/staff/kpi/save', [StaffKpiController::class, 'save']);
@@ -105,31 +123,34 @@ Route::post('/staff/kpi/submit/{id}', [StaffKpiController::class, 'submit']);
 |--------------------------------------------------------------------------
 */
 
-Route::get('/appraiser/home', 
-    [AppraiserKpiController::class, 'index']
-)->name('appraiser.home');
 
-Route::post('/appraiser/kpi/review/{id}', 
-    [AppraiserKpiController::class, 'review']
-)->name('appraiser.review');
+
+Route::get('/appraiser/home', function () {
+    abort_if(session('role') !== 'appraiser', 403);
+    return view('appraiser.appraiser_home');
+})->name('appraiser.home');
+
+
 
 Route::get('/appraiser/profile', function () {
     abort_if(session('role') !== 'appraiser', 403);
     return view('appraiser.profile');
 });
 
-Route::prefix('appraiser')->group(function () {
 
-    Route::get('/home', [AppraiserKpiController::class, 'index'])
-        ->name('appraiser.home');
+// APPRAISER KPI LIST
+Route::get('/appraiser/kpi', [AppraiserKpiController::class, 'index'])
+    ->name('appraiser.kpi');
 
-    Route::get('/kpi', [AppraiserKpiController::class, 'showAll'])
-        ->name('appraiser.kpi');
+// VIEW ONE SUBMISSION
+Route::get('/appraiser/kpi/{id}', [AppraiserKpiController::class, 'show'])
+    ->name('appraiser.kpi.show');
 
-    Route::post('/kpi/update/{id}', [AppraiserKpiController::class, 'updateScore'])
-        ->name('appraiser.kpi.update');
+// SUBMIT REVIEW
+Route::post('/appraiser/kpi/review/{id}', [AppraiserKpiController::class, 'submitReview'])
+    ->name('appraiser.kpi.submitReview');
 
-});
+
 /*
 |--------------------------------------------------------------------------
 | ADMIN ROUTES
@@ -156,8 +177,8 @@ Route::post('/admin/users/store', function (Request $request) {
         'email' => 'required|email|unique:users',
         'role' => 'required|in:staff,appraiser,admin',
         'password' => 'required|min:6|confirmed',
-        'position' => 'required_if:role,staff',
-        'intake' => 'required_if:role,staff',
+        'staff_type' => 'required_if:role,staff',
+        'intake_month' => 'required_if:role,staff',
         'intake_year' => 'required_if:role,staff|numeric'
 
     ]);
@@ -167,8 +188,8 @@ Route::post('/admin/users/store', function (Request $request) {
         'email' => $request->email,
         'password' => Hash::make($request->password), // ⭐ VERY IMPORTANT
         'role' => $request->role,
-        'position' => $request->position,
-        'intake' => $request->intake,
+        'staff_type' => $request->staff_type,
+        'intake_month' => $request->intake_month,
         'intake_year' => $request->intake_year
 
     ]);
@@ -188,9 +209,15 @@ Route::get('/admin/profile', function () {
 | ADMIN – KPI MANAGEMENT
 |--------------------------------------------------------------------------
 */
+
 Route::prefix('admin/kpi')->group(function () {
 
-    Route::get('/{category}', [AdminKpiController::class, 'category']);
+    Route::get('/{staff_type}/{category}', 
+        [AdminKpiController::class, 'category']
+    )->where([
+        'staff_type' => 'academic|non-academic',
+        'category' => 'teaching|research|internal|learning'
+    ]);
 
     Route::post('/storeAll', [AdminKpiController::class, 'storeAll']);
 
@@ -237,7 +264,9 @@ Route::post('/admin/register', function (Request $request) {
         'email' => 'required|email|unique:users',
         'password' => 'required|min:6|confirmed',
         'role' => 'required|in:staff,appraiser,admin',
-        'position' => 'nullable|required_if:role,staff'
+        'staff_type' => 'nullable|required_if:role,staff',
+        'intake_month' => 'nullable|required_if:role,staff',
+        'intake_year' => 'nullable|required_if:role,staff|numeric'
     ]);
 
 
@@ -246,7 +275,10 @@ Route::post('/admin/register', function (Request $request) {
         'email'    => $request->email,
         'password' => Hash::make($request->password),
         'role'     => 'admin',
-        'position' =>$request->position
+        'staff_type' => $request->staff_type,
+        'intake_month' => $request->intake_month,
+        'intake_year' => $request->intake_year
+
     ]);
 
     return redirect('/admin/login')->with('success', 'Admin registered successfully');

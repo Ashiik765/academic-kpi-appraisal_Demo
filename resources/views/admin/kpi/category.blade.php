@@ -17,6 +17,7 @@
         @csrf
 
         <input type="hidden" name="category" value="{{ $category }}">
+        <input type="hidden" name="staff_type" value="{{ $staff_type }}">
 
         <table style="width:100%; margin-top:20px; border-collapse:collapse;" id="kpiTable">
             <tr style="background:#2c3e50; color:white;">
@@ -38,7 +39,7 @@
 
         <button type="submit"
                 style="margin-top:15px; padding:8px 15px; background:#27ae60; color:white; border:none;">
-            Turn In
+            Save All
         </button>
 
     </form>
@@ -68,9 +69,11 @@
         </tr>
         @empty
         <tr>
+
             <td colspan="4" style="text-align:center; padding:15px;">
                 No KPI added yet
             </td>
+
         </tr>
         @endforelse
     </table>
@@ -103,4 +106,3 @@ function addRow() {
     `;
 }
 </script>
-

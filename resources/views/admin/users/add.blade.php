@@ -39,9 +39,9 @@
 
         <!-- POSITION (STAFF ONLY) -->
         <div id="positionField" style="margin-bottom: 15px; display:none;">
-            <label>Position</label>
-            <select name="position" class="input">
-                <option value="">Select Position</option>
+            <label>staff_type</label>
+            <select name="staff_type" class="input">
+                <option value="">Select Type </option>
                 <option value="lecture">Lecture</option>
                 <option value="seniorlecture">Senior Lecture</option>
                 <option value="lecture1">Lecture 1</option>
@@ -52,8 +52,8 @@
             </select>
             <!-- INTAKE -->
             <div style="margin-top:15px;">
-                <label>Intake</label>
-                <select name="intake" class="input">
+                <label>intake_month</label>
+                <select name="intake_month" class="input">
                     <option value="">Select Intake</option>
                     <option value="Jan">January</option>
                     <option value="May">May</option>

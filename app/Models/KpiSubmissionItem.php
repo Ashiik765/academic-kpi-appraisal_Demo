@@ -6,18 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class KpiSubmissionItem extends Model
 {
-    // include all fields that will be updated via mass assignment from controller
     protected $fillable = [
         'submission_id',
         'kpi_id',
-        'self_score',    // staff-entered score
+
+        'self_score',
+
+        'appraiser_score',
+        'staff_total',
+        'appraiser_total',
+        'total_score',
+
         'rating',
         'score',
         'evidence',
         'status',
         'comment',
-        'role'           // added by later migration
-        
+        'role'
     ];
 
     public function submission()
@@ -29,5 +34,4 @@ class KpiSubmissionItem extends Model
     {
         return $this->belongsTo(\App\Models\Kpi::class, 'kpi_id');
     }
-
 }

@@ -22,8 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'position',
-        'intake',
+        'staff_type',
+        'intake_month',
         'intake_year'
     ];
 

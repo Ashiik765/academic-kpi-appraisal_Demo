@@ -29,6 +29,10 @@ class StaffKpiController extends Controller
             ]
         );
 
+        if ($submission->status === 'reviewed') {
+            return back()->with('error', 'KPI already reviewed. Editing not allowed.');
+        }
+
         // Only load KPIs of selected category
         $kpis = Kpi::whereRaw('LOWER(category) = ?', [strtolower($category)])->get();
 
@@ -43,6 +47,11 @@ class StaffKpiController extends Controller
             'submissionItems',
             'category'
         ));
+    }
+
+    public function dashboard()
+    {
+        return view('staff.dashboard');
     }
 
     public function save(Request $request)
@@ -92,6 +101,8 @@ class StaffKpiController extends Controller
         return back()->with('success', 'Draft saved successfully.');
     }
 
+    
+
 
     public function submit($id)
     
@@ -104,5 +115,30 @@ class StaffKpiController extends Controller
 
         return back()->with('success', 'KPI submitted successfully.');
     }
+
+
+    public function result()
+    
+    {
+        abort_if(session('role') !== 'staff', 403);
+
+        $userId = session('user_id');
+
+        $submission = \App\Models\KpiSubmission::where('user_id', $userId)
+            ->where('status','reviewed')
+            ->latest()
+            ->first();
+
+        if(!$submission){
+            return view('staff.kpi.no_result');
+        }
+
+        $items = \App\Models\KpiSubmissionItem::with('kpi')
+            ->where('submission_id',$submission->id)
+            ->get();
+
+        return view('staff.kpi.result',compact('items','submission'));
+    }
+
 
 }

@@ -403,7 +403,7 @@
                         $item = $submissionItems[$kpi->id] ?? null;
                         $status = $item->status ?? 'draft';
                         $hasScore = isset($item->self_score) && $item->self_score !== '' && $item->self_score !== null;
-                        $hasEvidence = isset($item->evidence_path) && !empty($item->evidence_path);
+                        $hasEvidence = isset($item->evidence) && !empty($item->evidence);
                     @endphp
 
                     <tr data-kpi-id="{{ $kpi->id }}" data-status="{{ $status }}">

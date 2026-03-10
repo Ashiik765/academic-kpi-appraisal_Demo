@@ -69,8 +69,8 @@
                 <th style="padding:12px;">Name</th>
                 <th>Email</th>
                 <th>Role</th>
-                <th>Position</th>
-                <th>Intake</th>
+                <th>staff_type</th>
+                <th>intake_month</th>
                 <th>Year</th>
                 <th width="140" style="text-align:center;">Action</th>
             </tr>
@@ -95,8 +95,8 @@
                     </span>
                 </td>
 
-                <td>{{ $user->position ?? '-' }}</td>
-                <td>{{ $user->intake ?? '-' }}</td>
+                <td>{{ $user->staff_type ?? '-' }}</td>
+                <td>{{ $user->intake_month ?? '-' }}</td>
                 <td>{{ $user->intake_year ?? '-' }}</td>
 
                 <td style="text-align:center;">

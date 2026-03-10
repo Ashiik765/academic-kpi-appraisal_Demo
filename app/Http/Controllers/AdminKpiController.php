@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Kpi;
 use Illuminate\Http\Request;
 
+
 class AdminKpiController extends Controller
 {
-    public function category($category)
-    {
-        $kpis = Kpi::where('category', $category)->get();
+    public function category($staff_type, $category)
 
-        return view('admin.kpi.category', compact('kpis','category'));
+    {
+        $kpis = Kpi::where('category', $category)
+                    ->where('staff_type', $staff_type)
+                    ->get();
+
+        return view('admin.kpi.category', compact('kpis','category','staff_type'));
     }
 
 
@@ -36,6 +40,7 @@ class AdminKpiController extends Controller
                     'category' => $category,
                     'criteria' => $crit,
                     'weightage' => $weights[$index],
+                    'staff_type' => $request->staff_type
                 ]);
             }
         }
